@@ -42,12 +42,12 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.textBoxLog = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.btnClearLog = new System.Windows.Forms.Button();
             this.btnStartServer = new System.Windows.Forms.Button();
             this.btnAbout = new System.Windows.Forms.Button();
             this.btnBrowseDir = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.btnClearLog = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -64,7 +64,7 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(13, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(762, 127);
             this.groupBox1.TabIndex = 3;
@@ -146,7 +146,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.listBoxClientList);
-            this.groupBox2.Location = new System.Drawing.Point(12, 145);
+            this.groupBox2.Location = new System.Drawing.Point(13, 145);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(250, 403);
             this.groupBox2.TabIndex = 2;
@@ -165,7 +165,7 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.textBoxLog);
-            this.groupBox3.Location = new System.Drawing.Point(268, 145);
+            this.groupBox3.Location = new System.Drawing.Point(269, 145);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(506, 403);
             this.groupBox3.TabIndex = 2;
@@ -191,12 +191,22 @@
             this.groupBox4.Controls.Add(this.btnBrowseDir);
             this.groupBox4.Controls.Add(this.textBox1);
             this.groupBox4.Controls.Add(this.label5);
-            this.groupBox4.Location = new System.Drawing.Point(780, 12);
+            this.groupBox4.Location = new System.Drawing.Point(781, 12);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(250, 536);
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "操作";
+            // 
+            // btnClearLog
+            // 
+            this.btnClearLog.Location = new System.Drawing.Point(57, 366);
+            this.btnClearLog.Name = "btnClearLog";
+            this.btnClearLog.Size = new System.Drawing.Size(139, 50);
+            this.btnClearLog.TabIndex = 4;
+            this.btnClearLog.Text = "清空日志";
+            this.btnClearLog.UseVisualStyleBackColor = true;
+            this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
             // 
             // btnStartServer
             // 
@@ -244,22 +254,12 @@
             this.label5.TabIndex = 1;
             this.label5.Text = "端口:";
             // 
-            // btnClearLog
-            // 
-            this.btnClearLog.Location = new System.Drawing.Point(57, 366);
-            this.btnClearLog.Name = "btnClearLog";
-            this.btnClearLog.Size = new System.Drawing.Size(139, 50);
-            this.btnClearLog.TabIndex = 4;
-            this.btnClearLog.Text = "清空日志";
-            this.btnClearLog.UseVisualStyleBackColor = true;
-            this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
-            // 
             // FormServerMain
             // 
             this.AcceptButton = this.btnStartServer;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1042, 561);
+            this.ClientSize = new System.Drawing.Size(1044, 561);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -267,6 +267,7 @@
             this.MaximizeBox = false;
             this.Name = "FormServerMain";
             this.Text = "[离线] 服务器仪表盘";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormServerMain_FormClosed);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -43,12 +44,11 @@ namespace FileTransfer_Server
 
         public String[] fileList = null;
 
+        public string[] ClientInfo = null;
+
         int fileCounter;
 
-        // 服务器是否处于启动状态
         bool isServerStart;
-
-        string[] ClientInfo;
 
         public FormServerMain()
         {
@@ -87,6 +87,13 @@ namespace FileTransfer_Server
                 {
                     return;
                 }
+
+                // 开辟线程 开始侦听连接
+                new Thread(ListenConnect).Start();
+
+                // 输出日志
+                OutputLog("[开始侦听网络]");
+
             }
             else
             {
@@ -133,6 +140,8 @@ namespace FileTransfer_Server
                 return;
             }
 
+            BroadcastMessage("#connect#close#");
+
             Server.Dispose();
             Server.Close();
             Server = null;
@@ -148,6 +157,142 @@ namespace FileTransfer_Server
             isServerStart = false;
             Text = "[离线] 服务器仪表盘";
             btnStartServer.Text = "上线";
+        }
+
+        /// <summary>
+        /// 侦听连接
+        /// </summary>
+        public void ListenConnect()
+        {
+            try
+            {
+
+                Socket client = Server.Accept();
+
+                OutputLog("[客户端上线] [" + client.RemoteEndPoint.ToString() + "]");
+
+                client.Send(Encoding.Unicode.GetBytes("#connect#ok#"));
+
+                ClientList.Add(client);
+
+                TempListenClient = client;
+
+                new Thread(ReceiveMessage).Start();
+
+                UpdateListBoxData();
+
+                new Thread(ListenConnect).Start();
+
+                Thread.CurrentThread.Suspend();
+
+                Thread.CurrentThread.Abort();
+
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType().Name == "SocketException")
+                {
+                    SocketException sEx = ex as SocketException;
+
+                    if (sEx.ErrorCode == 10004)
+                    {
+                        return;
+                    }
+                }
+
+                OutputLog(ex.Message.ToString(), true);
+            }
+        }
+
+        /// <summary>
+        /// 接收消息
+        /// </summary>
+        public void ReceiveMessage()
+        {
+
+            try
+            {
+                Socket tmp_client = TempListenClient;
+                while (true)
+                {
+                    Socket CheckTmpClient = ClientList.Find(c => c.Handle == tmp_client.Handle);
+
+                    if (CheckTmpClient == null)
+                    {
+                        return;
+                    }
+
+                    byte[] result = new byte[9000];
+
+                    int receiveLength = tmp_client.Receive(result);
+
+                    string receiveResult = Encoding.Unicode.GetString(result);
+
+                    
+                    if (Regex.IsMatch(receiveResult, "#connect#discon#"))
+                    {
+                        OutputLog("[客户端下线]", logFrom: tmp_client.RemoteEndPoint.ToString());
+
+                        ClientList.Remove(CheckTmpClient);
+
+                        UpdateListBoxData();
+
+                        return;
+                    }
+
+
+                    //if (Regex.IsMatch(receiveResult, "#file#info#"))
+                    //{
+                    //    string[] fileinfo = receiveResult.Split('#');
+
+                    //    new Form_ReceiveFile(new { FileId = fileinfo[3], Name = fileinfo[4], Length = long.Parse(fileinfo[5]) }, tmp_client).ShowDialog();
+
+                    //}
+
+
+                    ReceiveMsgStr = receiveResult;
+                    ReceiveMsgByte = result;
+                    ClientInfo = receiveResult.Split('#');
+                }
+            }
+            catch (Exception ex)
+            {
+                // 显示错误信息
+                OutputLog(ex.Message.ToString(), true);
+            }
+        }
+
+        /// <summary>
+        /// 更新列表
+        /// </summary>
+        public void UpdateListBoxData()
+        {
+            List<Socket> tempList = new List<Socket>();
+
+            tempList.AddRange(ClientList);
+
+            listBoxClientList.DataSource = tempList;
+            listBoxClientList.DisplayMember = "RemoteEndPoint";
+            listBoxClientList.ValueMember = "Handle";
+        }
+
+        /// <summary>
+        /// 向客户端广播报文
+        /// </summary>
+        /// <param name="Message">报文信息</param>
+        public void BroadcastMessage(string Message)
+        {
+            try
+            {
+                foreach (Socket client in ClientList)
+                {
+                    client.Send(Encoding.Unicode.GetBytes(Message));
+                }
+            }
+            catch (Exception ex)
+            {
+                OutputLog(ex.Message.ToString(), true);
+            }
         }
 
         /// <summary>
@@ -259,5 +404,21 @@ namespace FileTransfer_Server
         {
             textBoxLog.Text = "";
         }
+
+        /// <summary>
+        /// 窗口关闭事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FormServerMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            CloseServer();
+            Dispose(true);
+            Environment.Exit(0);
+            Application.Exit();
+            Application.ExitThread();
+        }
+
+
     }
 }
