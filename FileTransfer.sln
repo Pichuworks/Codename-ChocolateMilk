@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransfer", "FileTransfer\FileTransfer.csproj", "{ED4A5030-3FE1-4616-ADAD-45A8761D66F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransfer Server", "FileTransfer Server\FileTransfer Server.csproj", "{5AE86D40-05DA-4C23-B228-D835B2F713AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileTransfer Client", "FileTransfer Client\FileTransfer Client.csproj", "{D4633018-5DAA-4890-97EE-2BA1A6BF0978}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ED4A5030-3FE1-4616-ADAD-45A8761D66F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED4A5030-3FE1-4616-ADAD-45A8761D66F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED4A5030-3FE1-4616-ADAD-45A8761D66F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED4A5030-3FE1-4616-ADAD-45A8761D66F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AE86D40-05DA-4C23-B228-D835B2F713AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AE86D40-05DA-4C23-B228-D835B2F713AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AE86D40-05DA-4C23-B228-D835B2F713AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AE86D40-05DA-4C23-B228-D835B2F713AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4633018-5DAA-4890-97EE-2BA1A6BF0978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4633018-5DAA-4890-97EE-2BA1A6BF0978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4633018-5DAA-4890-97EE-2BA1A6BF0978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4633018-5DAA-4890-97EE-2BA1A6BF0978}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
