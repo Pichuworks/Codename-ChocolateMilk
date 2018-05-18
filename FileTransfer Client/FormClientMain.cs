@@ -26,6 +26,10 @@ namespace FileTransfer_Client
         private bool isConnectStart;
         // 接收到的消息字符串
         private string ReceiveMsgStr = "";
+        // 学号
+        private string stdNo = "";
+        // 姓名
+        private string stdName = "";
 
         public FormClientMain()
         {
