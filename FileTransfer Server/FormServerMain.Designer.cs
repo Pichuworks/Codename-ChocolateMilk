@@ -47,7 +47,7 @@
             this.btnBrowseDir = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnClearLog = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -160,7 +160,7 @@
             this.listBoxClientList.Location = new System.Drawing.Point(15, 25);
             this.listBoxClientList.Name = "listBoxClientList";
             this.listBoxClientList.Size = new System.Drawing.Size(220, 364);
-            this.listBoxClientList.TabIndex = 3;
+            this.listBoxClientList.TabIndex = 0;
             // 
             // groupBox3
             // 
@@ -185,6 +185,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.btnClearLog);
             this.groupBox4.Controls.Add(this.btnStartServer);
             this.groupBox4.Controls.Add(this.btnAbout);
             this.groupBox4.Controls.Add(this.btnBrowseDir);
@@ -199,7 +200,7 @@
             // 
             // btnStartServer
             // 
-            this.btnStartServer.Location = new System.Drawing.Point(57, 170);
+            this.btnStartServer.Location = new System.Drawing.Point(57, 158);
             this.btnStartServer.Name = "btnStartServer";
             this.btnStartServer.Size = new System.Drawing.Size(139, 50);
             this.btnStartServer.TabIndex = 2;
@@ -209,25 +210,26 @@
             // 
             // btnAbout
             // 
-            this.btnAbout.Location = new System.Drawing.Point(57, 394);
+            this.btnAbout.Location = new System.Drawing.Point(57, 470);
             this.btnAbout.Name = "btnAbout";
             this.btnAbout.Size = new System.Drawing.Size(139, 50);
-            this.btnAbout.TabIndex = 4;
+            this.btnAbout.TabIndex = 5;
             this.btnAbout.Text = "关于";
             this.btnAbout.UseVisualStyleBackColor = true;
             // 
             // btnBrowseDir
             // 
-            this.btnBrowseDir.Location = new System.Drawing.Point(57, 282);
+            this.btnBrowseDir.Location = new System.Drawing.Point(57, 262);
             this.btnBrowseDir.Name = "btnBrowseDir";
             this.btnBrowseDir.Size = new System.Drawing.Size(139, 50);
             this.btnBrowseDir.TabIndex = 3;
             this.btnBrowseDir.Text = "浏览目录";
             this.btnBrowseDir.UseVisualStyleBackColor = true;
+            this.btnBrowseDir.Click += new System.EventHandler(this.btnBrowseDir_Click);
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(96, 92);
+            this.textBox1.Location = new System.Drawing.Point(96, 61);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 21);
             this.textBox1.TabIndex = 0;
@@ -236,15 +238,21 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(55, 95);
+            this.label5.Location = new System.Drawing.Point(55, 64);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(35, 12);
             this.label5.TabIndex = 1;
             this.label5.Text = "端口:";
             // 
-            // folderBrowserDialog1
+            // btnClearLog
             // 
-            this.folderBrowserDialog1.RootFolder = System.Environment.SpecialFolder.ApplicationData;
+            this.btnClearLog.Location = new System.Drawing.Point(57, 366);
+            this.btnClearLog.Name = "btnClearLog";
+            this.btnClearLog.Size = new System.Drawing.Size(139, 50);
+            this.btnClearLog.TabIndex = 4;
+            this.btnClearLog.Text = "清空日志";
+            this.btnClearLog.UseVisualStyleBackColor = true;
+            this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
             // 
             // FormServerMain
             // 
@@ -284,7 +292,6 @@
         private System.Windows.Forms.Button btnBrowseDir;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
@@ -292,6 +299,7 @@
         private System.Windows.Forms.ListBox listBoxClientList;
         private System.Windows.Forms.TextBox textBoxLog;
         private System.Windows.Forms.Button btnStartServer;
+        private System.Windows.Forms.Button btnClearLog;
     }
 }
 

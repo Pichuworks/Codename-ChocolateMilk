@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +39,12 @@ namespace FileTransfer_Server
 
         public Byte[] ReceiveMsgByte;
 
+        public string ServerDirPath;
+
+        public String[] fileList = null;
+
+        int fileCounter;
+
         // 服务器是否处于启动状态
         bool isServerStart;
 
@@ -49,13 +57,25 @@ namespace FileTransfer_Server
             label7.Text = "[离线]";
             label8.Text = "[离线]";
             label9.Text = "[未选择]";
+            AcceptButton = btnBrowseDir;
         }
 
+        /// <summary>
+        /// 服务器上线/下线
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnStartServer_Click(object sender, EventArgs e)
         {
             if (isServerStart)
             {
                 CloseServer();
+                return;
+            }
+
+            if(fileList == null)
+            {
+                MessageBox.Show("目录无法加载！");
                 return;
             }
 
@@ -76,10 +96,10 @@ namespace FileTransfer_Server
         }
 
         /// <summary>
-        /// 启动服务器
+        /// 服务器上线逻辑
         /// </summary>
         /// <param name="port">指定端口</param>
-        /// <returns>启动结果</returns>
+        /// <returns>是否上线？</returns>
         bool ServerInit(int port)
         {
             try
@@ -104,7 +124,7 @@ namespace FileTransfer_Server
         }
 
         /// <summary>
-        /// 关闭服务器
+        /// 服务器下线逻辑
         /// </summary>
         public void CloseServer()
         {
@@ -197,6 +217,47 @@ namespace FileTransfer_Server
                     e.KeyChar = (char)0;   // 处理非法字符  
                 }
             }
+        }
+
+        /// <summary>
+        /// 浏览目录
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnBrowseDir_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.Description = "请选择共享目录：";
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (string.IsNullOrEmpty(dialog.SelectedPath))
+                {
+                    MessageBox.Show(this, "共享目录不能为空！", "提示");
+                    return;
+                }
+                ServerDirPath = dialog.SelectedPath;
+                label9.Text = ServerDirPath;
+
+                fileList = Directory.GetFiles(ServerDirPath, "*", SearchOption.AllDirectories);
+                fileCounter = fileList.Length;
+                
+                // Debug mode
+                for(int i=0; i< fileCounter; i++)
+                {
+                    OutputLog("[读入文件] " + fileList[i]);
+                }
+                AcceptButton = btnStartServer;
+            }
+        }
+
+        /// <summary>
+        /// 清空日志
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnClearLog_Click(object sender, EventArgs e)
+        {
+            textBoxLog.Text = "";
         }
     }
 }
