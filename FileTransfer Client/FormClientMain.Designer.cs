@@ -111,7 +111,7 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(59, 12);
             this.label12.TabIndex = 11;
-            this.label12.Text = "本机学号:";
+            this.label12.Text = "本机用户:";
             // 
             // label11
             // 
@@ -120,7 +120,7 @@
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(59, 12);
             this.label11.TabIndex = 10;
-            this.label11.Text = "本机用户:";
+            this.label11.Text = "本机学号:";
             // 
             // label5
             // 

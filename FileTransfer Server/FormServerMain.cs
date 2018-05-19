@@ -288,13 +288,25 @@ namespace FileTransfer_Server
             OutputLog("学号: " + fileRequest[3] + " 姓名: " + fileRequest[4]);
             OutputLog("文件: " + fileRequest[5]);
 
-            // 开始更改
+            // 获得文件大小
             long lSize = 0;
             lSize = new FileInfo(fileRequest[5] + "\\").Length;
             OutputLog("[文件大小] " + lSize.ToString());
-            // 更改结束
 
-            tmp_client.Send(Encoding.Unicode.GetBytes("#filedata#receive#" + fileRequest[5] + "#" + lSize.ToString() + "#"));
+            // 计算需要分多少片
+            long pkgNum = lSize / 256;
+            if (lSize % 256 != 0)
+            {
+                pkgNum++;
+            }
+
+            // 打出发送前数据
+            tmp_client.Send(Encoding.Unicode.GetBytes("#filedata#receive#" + fileRequest[5] + "#" + lSize.ToString() + "#" + pkgNum.ToString() + "#"));
+
+            // 分片打出
+
+
+
 
             OutputLog("[服务器响应操作] " + "#filedata#receive#" + fileRequest[5]);
             OutputLog("------------------");

@@ -267,7 +267,7 @@ namespace FileTransfer_Client
                     // 清空原列表
                     listBoxServerFileList.Items.Clear();
 
-                    for (int i = 3; i < fileLength; i++)
+                    for (int i = 3; i < fileLength - 1; i++)
                     {
                         string[] tmpDirPath = fileList[i].Split('\\');
                         int tmpDirLength = tmpDirPath.Length;
@@ -434,6 +434,7 @@ namespace FileTransfer_Client
             string filePath;
             string fileName;
             int fileSpace;
+            int pkgNum;
 
             OutputLog("[向服务器请求文件] " + listBoxServerFileList.Items[index]);
             // 末尾不加#就等着报错吧，字符串不自己断\0的恐惧
@@ -453,9 +454,15 @@ namespace FileTransfer_Client
 
             string[] tmpDirPath = filePath.Split('\\');
             int tmpDirLength = tmpDirPath.Length;
+
             fileName = tmpDirPath[tmpDirLength - 1];
             fileSpace = Convert.ToInt32(fileInfo[4]);
-            OutputLog("[解析] 文件名: " + fileName + " 字节数: " + fileSpace.ToString());
+            pkgNum = Convert.ToInt32(fileInfo[5]);
+
+            OutputLog("[解析] 文件名: " + fileName + " 字节数: " + fileSpace.ToString() + " 分片数: " + pkgNum.ToString());
+
+            // 现在该传送文件了！
+
 
         }
 
