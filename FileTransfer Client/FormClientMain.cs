@@ -429,21 +429,15 @@ namespace FileTransfer_Client
 
         public void ReceiveFile(int index)
         {
+            string serverCommand;
             OutputLog("[向服务器请求文件] " + listBoxServerFileList.Items[index]);
-            Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3]));
+            Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3] + "#"));
             OutputLog("[等待服务器响应]");
-
-            /*
-            while (!Regex.IsMatch(ReceiveMsgStr, "#filedata#receive#"))
-            {
-
-            }
-            OutputLog("[收到服务器响应] - " + ReceiveMsgStr);
-            */
 
             while (tmpFileRes == "") ;
 
-            OutputLog("[ReceiveFile 收到服务器响应] - " + tmpFileRes);
+            serverCommand = tmpFileRes;
+            OutputLog("[ReceiveFile 收到服务器响应] - " + serverCommand);
 
             tmpFileRes = "";
 

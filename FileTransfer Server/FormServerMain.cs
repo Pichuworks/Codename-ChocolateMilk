@@ -288,6 +288,12 @@ namespace FileTransfer_Server
             OutputLog("学号: " + fileRequest[3] + " 姓名: " + fileRequest[4]);
             OutputLog("文件: " + fileRequest[5]);
 
+            // 开始更改
+            long lSize = 0;
+            lSize = new FileInfo(fileRequest[5] + "\\").Length;
+            OutputLog("[文件大小] " + lSize.ToString());
+            // 更改结束
+
             tmp_client.Send(Encoding.Unicode.GetBytes("#filedata#receive#" + fileRequest[5]));
 
             OutputLog("[服务器响应操作] " + "#filedata#receive#" + fileRequest[5]);
