@@ -47,6 +47,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.textBoxLog = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.button5 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.textBox4 = new System.Windows.Forms.TextBox();
@@ -58,7 +59,6 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.button5 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -267,6 +267,16 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "操作";
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(88, 389);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(75, 23);
+            this.button5.TabIndex = 11;
+            this.button5.Text = "清空日志";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
             // button3
             // 
             this.button3.Location = new System.Drawing.Point(88, 499);
@@ -334,6 +344,7 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(141, 21);
             this.textBox2.TabIndex = 3;
+            this.textBox2.Text = "6666";
             // 
             // textBox1
             // 
@@ -341,6 +352,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(141, 21);
             this.textBox1.TabIndex = 2;
+            this.textBox1.Text = "10.14.144.43";
             // 
             // label18
             // 
@@ -359,16 +371,6 @@
             this.label17.Size = new System.Drawing.Size(59, 12);
             this.label17.TabIndex = 0;
             this.label17.Text = "服务器IP:";
-            // 
-            // button5
-            // 
-            this.button5.Location = new System.Drawing.Point(88, 389);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(75, 23);
-            this.button5.TabIndex = 11;
-            this.button5.Text = "清空日志";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // FormClientMain
             // 

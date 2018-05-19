@@ -37,6 +37,9 @@ namespace FileTransfer_Client
         // 文件夹仪表盘标识
         private int flagDirPathDisp;
 
+        // SB多线程
+        private string tmpFileRes = "";
+
         public FormClientMain()
         {
             InitializeComponent();
@@ -239,6 +242,9 @@ namespace FileTransfer_Client
                 // 转换成字符串
                 string receiveResult = Encoding.Unicode.GetString(result);
 
+                // 在这里也要保存消息字符串 用于异步访问
+                ReceiveMsgStr = receiveResult;
+
                 // 消息 - 连接关闭
                 if (Regex.IsMatch(receiveResult, "#connect#close#"))
                 {
@@ -283,8 +289,16 @@ namespace FileTransfer_Client
                     }
                 }
 
+                
+                if (Regex.IsMatch(receiveResult, "#filedata#receive#"))
+                {
+                    OutputLog("[ReceiveMessage 收到服务器响应] - " + ReceiveMsgStr);
+                    tmpFileRes = ReceiveMsgStr;
+                }
+                
+
                 // 保存消息字符串 用于异步访问
-                ReceiveMsgStr = receiveResult;
+                // ReceiveMsgStr = receiveResult;
 
                 // 开辟新线程运行本方法
                 new Thread(ReceiveMessage).Start();
@@ -324,7 +338,7 @@ namespace FileTransfer_Client
             try
             {
                 // 定义字节数组
-                byte[] result = new byte[9000];
+                byte[] result = new byte[65535];
 
                 // 接收消息
                 Server.Receive(result);
@@ -403,17 +417,36 @@ namespace FileTransfer_Client
             int index = listBoxServerFileList.SelectedIndex;
             if (index != System.Windows.Forms.ListBox.NoMatches)
             {
-                // MessageBox.Show(fileList[index + 3]);
-                OutputLog("[向服务器请求文件]" + listBoxServerFileList.Items[index]);
-                Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3]));
-                //OutputLog("[等待服务器响应]");
-                //LoopCheckReceiveMsgStr("#file#");
-                //if (Regex.IsMatch(ReceiveMsgStr, "#file#info#"))
-                //{
-                //    OutputLog("[服务器响应]", isFromServer: true);
-                //}
+                Thread thread = new Thread(() => ReceiveFileThread(index));
+                thread.Start();
+            }
+        }
+
+        public void ReceiveFileThread(int index)
+        {
+            ReceiveFile(index);
+        }
+
+        public void ReceiveFile(int index)
+        {
+            OutputLog("[向服务器请求文件] " + listBoxServerFileList.Items[index]);
+            Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3]));
+            OutputLog("[等待服务器响应]");
+
+            /*
+            while (!Regex.IsMatch(ReceiveMsgStr, "#filedata#receive#"))
+            {
 
             }
+            OutputLog("[收到服务器响应] - " + ReceiveMsgStr);
+            */
+
+            while (tmpFileRes == "") ;
+
+            OutputLog("[ReceiveFile 收到服务器响应] - " + tmpFileRes);
+
+            tmpFileRes = "";
+
         }
 
         private void button2_Click(object sender, EventArgs e)

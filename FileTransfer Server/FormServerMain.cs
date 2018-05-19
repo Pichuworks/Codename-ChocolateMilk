@@ -257,6 +257,8 @@ namespace FileTransfer_Server
                     if (Regex.IsMatch(receiveResult, "#file#request#"))
                     {
                         Thread thread = new Thread(() => SendFileThread(receiveResult, tmp_client));
+
+                        // 2018年5月19日，阴，我在上次没连数据库就操作之后，又出现了创建线程没打开的操作，这个要记下来。
                         thread.Start();
                     }
 
@@ -285,6 +287,10 @@ namespace FileTransfer_Server
             OutputLog("来自: " + tmp_client.RemoteEndPoint.ToString());
             OutputLog("学号: " + fileRequest[3] + " 姓名: " + fileRequest[4]);
             OutputLog("文件: " + fileRequest[5]);
+
+            tmp_client.Send(Encoding.Unicode.GetBytes("#filedata#receive#" + fileRequest[5]));
+
+            OutputLog("[服务器响应操作] " + "#filedata#receive#" + fileRequest[5]);
             OutputLog("------------------");
         }
 
