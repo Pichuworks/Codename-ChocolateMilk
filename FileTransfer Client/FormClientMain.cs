@@ -430,7 +430,13 @@ namespace FileTransfer_Client
         public void ReceiveFile(int index)
         {
             string serverCommand;
+            string[] fileInfo;
+            string filePath;
+            string fileName;
+            int fileSpace;
+
             OutputLog("[向服务器请求文件] " + listBoxServerFileList.Items[index]);
+            // 末尾不加#就等着报错吧，字符串不自己断\0的恐惧
             Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3] + "#"));
             OutputLog("[等待服务器响应]");
 
@@ -440,6 +446,16 @@ namespace FileTransfer_Client
             OutputLog("[ReceiveFile 收到服务器响应] - " + serverCommand);
 
             tmpFileRes = "";
+
+            fileInfo = serverCommand.Split('#');
+
+            filePath = fileInfo[3];
+
+            string[] tmpDirPath = filePath.Split('\\');
+            int tmpDirLength = tmpDirPath.Length;
+            fileName = tmpDirPath[tmpDirLength - 1];
+            fileSpace = Convert.ToInt32(fileInfo[4]);
+            OutputLog("[解析] 文件名: " + fileName + " 字节数: " + fileSpace.ToString());
 
         }
 

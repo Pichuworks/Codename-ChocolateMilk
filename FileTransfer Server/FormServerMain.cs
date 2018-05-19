@@ -294,7 +294,7 @@ namespace FileTransfer_Server
             OutputLog("[文件大小] " + lSize.ToString());
             // 更改结束
 
-            tmp_client.Send(Encoding.Unicode.GetBytes("#filedata#receive#" + fileRequest[5]));
+            tmp_client.Send(Encoding.Unicode.GetBytes("#filedata#receive#" + fileRequest[5] + "#" + lSize.ToString() + "#"));
 
             OutputLog("[服务器响应操作] " + "#filedata#receive#" + fileRequest[5]);
             OutputLog("------------------");
@@ -425,14 +425,12 @@ namespace FileTransfer_Server
                 fileCounter = fileList.Length;
 
                 serverFileList = "#connect#file#";
-                for (int i = 0; i < fileCounter - 1; i++)
+                for (int i = 0; i < fileCounter; i++)
                 {
                     OutputLog("[读入文件] " + fileList[i]);
                     serverFileList = serverFileList + fileList[i] + "#"; 
+                    // 即使是最后一行都要加#！要不然等着字符串末尾0的恐惧吧！！！！！！！！CNM C#！！！！
                 }
-                serverFileList = serverFileList + fileList[fileCounter - 1];
-
-                OutputLog("[读入文件] " + fileList[fileCounter - 1]);
 
                 // Debug
                 // OutputLog("[读入目录] " + serverFileList);
