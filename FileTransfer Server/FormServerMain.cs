@@ -44,6 +44,8 @@ namespace FileTransfer_Server
 
         public String[] fileList = null;
 
+        public string serverFileList = "#connect#file#";
+
         public string[] ClientInfo = null;
 
         int fileCounter;
@@ -169,9 +171,11 @@ namespace FileTransfer_Server
 
                 Socket client = Server.Accept();
 
-                OutputLog("[客户端上线] [" + client.RemoteEndPoint.ToString() + "]");
+                OutputLog("[客户端上线] IP: " + client.RemoteEndPoint.ToString());
 
                 client.Send(Encoding.Unicode.GetBytes("#connect#ok#"));
+
+                client.Send(Encoding.Unicode.GetBytes(serverFileList));
 
                 ClientList.Add(client);
 
@@ -295,6 +299,11 @@ namespace FileTransfer_Server
             }
         }
 
+        public void SendFileList(string FileList)
+        {
+
+        }
+
         /// <summary>
         /// 获取本机IP地址
         /// </summary>
@@ -385,12 +394,19 @@ namespace FileTransfer_Server
 
                 fileList = Directory.GetFiles(ServerDirPath, "*", SearchOption.AllDirectories);
                 fileCounter = fileList.Length;
-                
-                // Debug mode
-                for(int i=0; i< fileCounter; i++)
+
+                serverFileList = "#connect#file#";
+                for (int i = 0; i < fileCounter - 1; i++)
                 {
                     OutputLog("[读入文件] " + fileList[i]);
+                    serverFileList = serverFileList + fileList[i] + "#"; 
                 }
+                serverFileList = serverFileList + fileList[fileCounter - 1];
+                OutputLog("[读入文件] " + fileList[fileCounter - 1]);
+
+                // Debug
+                // OutputLog("[读入目录] " + serverFileList);
+
                 AcceptButton = btnStartServer;
             }
         }

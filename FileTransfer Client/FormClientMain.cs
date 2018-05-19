@@ -30,6 +30,12 @@ namespace FileTransfer_Client
         private string stdNo = "";
         // 姓名
         private string stdName = "";
+        // 服务器共享文件
+        public String[] fileList = null;
+        // 文件数量
+        private int fileLength;
+        // 文件夹仪表盘标识
+        private int flagDirPathDisp;
 
         public FormClientMain()
         {
@@ -42,8 +48,6 @@ namespace FileTransfer_Client
 
             label8.Text = "[未启用]";
 
-            label13.Text = "[未启用]";
-            label14.Text = "[未启用]";
             label15.Text = "[未启用]";
             label16.Text = "[未启用]";
         }
@@ -139,9 +143,7 @@ namespace FileTransfer_Client
             }
             else // 否则连接失败
             {
-                // 输出
                 OutputLog("[客户端无法上线] 服务器IP: " + ServerIP + " Port: " + ServerPort);
-
                 return false;
             }
         }
@@ -167,6 +169,10 @@ namespace FileTransfer_Client
             OutputLog("[客户端下线]");
             button1.Text = "连接";
             Text = "[离线] 客户端仪表盘";
+            label5.Text = "[离线]";
+            label6.Text = "[离线]";
+            label7.Text = "[离线]";
+            label8.Text = "[未启用]";
         }
 
         /// <summary>
@@ -182,6 +188,10 @@ namespace FileTransfer_Client
             OutputLog("[客户端下线]");
             button1.Text = "连接";
             Text = "[离线] 客户端仪表盘";
+            label5.Text = "[离线]";
+            label6.Text = "[离线]";
+            label7.Text = "[离线]";
+            label8.Text = "[未启用]";
         }
 
         /// <summary>
@@ -192,7 +202,7 @@ namespace FileTransfer_Client
             try
             {
                 // 定义Byte数组
-                byte[] result = new byte[9000];
+                byte[] result = new byte[65535];
 
                 // 接收
                 Server.Receive(result);
@@ -204,11 +214,47 @@ namespace FileTransfer_Client
                 if (Regex.IsMatch(receiveResult, "#connect#close#"))
                 {
                     // 输出
-                    OutputLog("[服务器已关闭连接]");
+                    OutputLog("[服务器下线]");
                     // 调用方法断开连接
                     DisconConnect();
 
                     return;
+                }
+
+                if (Regex.IsMatch(receiveResult, "#connect#file#"))
+                {
+                    // 分隔字符串
+                    fileList = receiveResult.Split('#');
+                    fileLength = fileList.Length;
+
+                    // Debug
+                    for(int i=3; i<fileLength; i++)
+                    {
+                        OutputLog("[读入文件] " + fileList[i]);
+                    }
+
+                    flagDirPathDisp = 0;
+
+                    listBoxServerFileList.Items.Clear();
+                    for (int i = 3; i < fileLength; i++)
+                    {
+                        string[] tmpDirPath = fileList[i].Split('\\');
+                        int tmpDirLength = tmpDirPath.Length;
+
+                        // 在仪表盘里显示目录
+                        if(flagDirPathDisp == 0)
+                        {
+                            label8.Text = "";
+                            for(int j = 0; j<tmpDirLength - 2; j++)
+                            {
+                                label8.Text += tmpDirPath[j] + '\\';
+                            }
+                            label8.Text += tmpDirPath[tmpDirLength - 2];
+                            flagDirPathDisp = 1;
+                        }
+
+                        listBoxServerFileList.Items.Add(tmpDirPath[tmpDirLength - 1]);
+                    }
                 }
 
                 // 保存消息字符串 用于异步访问
@@ -319,6 +365,11 @@ namespace FileTransfer_Client
             Environment.Exit(0);
             Application.Exit();
             Application.ExitThread();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            textBoxLog.Text = "";
         }
     }
 }
