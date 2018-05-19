@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -442,10 +443,8 @@ namespace FileTransfer_Client
             OutputLog("[等待服务器响应]");
 
             while (tmpFileRes == "") ;
-
             serverCommand = tmpFileRes;
             OutputLog("[ReceiveFile 收到服务器响应] - " + serverCommand);
-
             tmpFileRes = "";
 
             fileInfo = serverCommand.Split('#');
@@ -461,8 +460,14 @@ namespace FileTransfer_Client
 
             OutputLog("[解析] 文件名: " + fileName + " 字节数: " + fileSpace.ToString() + " 分片数: " + pkgNum.ToString());
 
-            // 现在该传送文件了！
+            // 现在该接收文件了！
 
+            List<byte[]> TempFileByteList = new List<byte[]>();
+
+            // 结束当前线程
+            OutputLog("[接收文件完成]");
+            Thread.CurrentThread.Suspend();
+            Thread.CurrentThread.Abort();
 
         }
 

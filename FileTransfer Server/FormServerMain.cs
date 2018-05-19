@@ -52,6 +52,10 @@ namespace FileTransfer_Server
 
         bool isServerStart;
 
+        // SB多线程相关
+        string tmp_receivestream;
+        string tmp_filenext;
+
         public FormServerMain()
         {
             // Fuck the Thread!!!
@@ -237,7 +241,9 @@ namespace FileTransfer_Server
 
                     string receiveResult = Encoding.Unicode.GetString(result);
 
-                    
+                    ReceiveMsgStr = receiveResult;
+                    ReceiveMsgByte = result;
+
                     if (Regex.IsMatch(receiveResult, "#connect#discon#"))
                     {
                         OutputLog("[客户端下线]", logFrom: tmp_client.RemoteEndPoint.ToString());
@@ -260,6 +266,12 @@ namespace FileTransfer_Server
 
                         // 2018年5月19日，阴，我在上次没连数据库就操作之后，又出现了创建线程没打开的操作，这个要记下来。
                         thread.Start();
+                    }
+
+                    if (Regex.IsMatch(receiveResult, "#file#receivestream#"))
+                    {
+                        OutputLog("[ReceiveMessage 收到 #file#receivestream#] - " + ReceiveMsgStr);
+                        tmp_receivestream = ReceiveMsgStr;
                     }
 
                     ReceiveMsgStr = receiveResult;
@@ -306,7 +318,7 @@ namespace FileTransfer_Server
             // 分片打出
             OutputLog("[开始发送数据]");
 
-
+            
 
             OutputLog("[服务器响应操作] " + "#filedata#receive#" + fileRequest[5]);
             OutputLog("------------------");
