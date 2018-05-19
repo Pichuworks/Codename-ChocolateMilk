@@ -8,6 +8,7 @@ namespace FileTransfer_Client
 {
     static class Program
     {
+        public static FormClientMain main;
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -16,7 +17,7 @@ namespace FileTransfer_Client
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormClientMain());
+            Application.Run((main = new FormClientMain()));
         }
     }
 }

@@ -18,28 +18,28 @@ namespace FileTransfer_Client
     public partial class FormClientMain : Form
     {
         // 连接的服务器 - 实例对象
-        private Socket Server;
+        static Socket Server;
         // 服务器IP
-        private string ServerIP;
+        static string ServerIP;
         // 服务器端口
-        private string ServerPort;
+        static string ServerPort;
         // 是否处于连接状态
-        private bool isConnectStart;
+        static bool isConnectStart;
         // 接收到的消息字符串
-        private string ReceiveMsgStr = "";
+        static string ReceiveMsgStr = "";
         // 学号
-        private string stdNo = "";
+        static string stdNo = "";
         // 姓名
-        private string stdName = "";
+        static string stdName = "";
         // 服务器共享文件
-        public String[] fileList = null;
+        static String[] fileList = null;
         // 文件数量
-        private int fileLength;
+        static int fileLength;
         // 文件夹仪表盘标识
-        private int flagDirPathDisp;
+        static int flagDirPathDisp;
 
         // SB多线程
-        private string tmpFileRes = "";
+        static string tmpFileRes = "";
 
         public FormClientMain()
         {
@@ -90,11 +90,11 @@ namespace FileTransfer_Client
         /// <summary>
         /// 服务器连接线程
         /// </summary>
-        public void ConnectServerThread()
+        static void ConnectServerThread()
         {
-            ServerIP = textBox1.Text;
+            ServerIP = Program.main.textBox1.Text;
 
-            ServerPort = textBox2.Text;
+            ServerPort = Program.main.textBox2.Text;
 
             if (ConnectServer(ServerIP, ServerPort))
             {
@@ -108,7 +108,7 @@ namespace FileTransfer_Client
         /// <param name="serverIP">服务器IP</param>
         /// <param name="serverPort">服务器端口</param>
         /// <returns></returns>
-        public bool ConnectServer(string serverIP, string serverPort)
+        static bool ConnectServer(string serverIP, string serverPort)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace FileTransfer_Client
         /// 检查连接状态
         /// </summary>
         /// <returns>连接成功/失败</returns>
-        public bool CheckConnectResult()
+        static bool CheckConnectResult()
         {
             // 接收消息字符串
             string receiveResult = ReceiveMessageStr();
@@ -144,20 +144,20 @@ namespace FileTransfer_Client
                 OutputLog("[客户端上线] 服务器IP: " + ServerIP + " Port: " + ServerPort);
 
                 // 设置按钮文本及窗口标题
-                button1.Text = "断开";
-                Text = "[在线] 客户端仪表盘 - 服务器IP: " + ServerIP + " Port: " + ServerPort;
+                Program.main.button1.Text = "断开";
+                Program.main.Text = "[在线] 客户端仪表盘 - 服务器IP: " + ServerIP + " Port: " + ServerPort;
 
                 // 打学号和姓名
                 Server.Send(Encoding.Unicode.GetBytes("#connect#userdata#" + stdNo + "#" + stdName));
 
                 // 仪表盘状态
-                label5.Text = ServerIP;
-                label6.Text = ServerPort;
-                label7.Text = "[联机]";
-                label15.Text = stdNo;
-                label16.Text = stdName;
+                Program.main.label5.Text = ServerIP;
+                Program.main.label6.Text = ServerPort;
+                Program.main.label7.Text = "[联机]";
+                Program.main.label15.Text = stdNo;
+                Program.main.label16.Text = stdName;
 
-                button2.Enabled = false;
+                Program.main.button2.Enabled = false;
 
                 // 设置连接状态
                 isConnectStart = true;
@@ -174,7 +174,7 @@ namespace FileTransfer_Client
         /// <summary>
         /// 断开连接
         /// </summary>
-        public void DisconConnect()
+        static void DisconConnect()
         {
             // 通知服务器断开连接
             Server.Send(Encoding.Unicode.GetBytes("#connect#discon#" + Server.Handle.ToString() + "#"));
@@ -190,23 +190,23 @@ namespace FileTransfer_Client
             isConnectStart = false;
 
             OutputLog("[客户端下线]");
-            button1.Text = "连接";
-            Text = "[离线] 客户端仪表盘";
-            label5.Text = "[离线]";
-            label6.Text = "[离线]";
-            label7.Text = "[离线]";
-            label8.Text = "[未启用]";
-            label15.Text = "[离线]";
-            label16.Text = "[离线]";
+            Program.main.button1.Text = "连接";
+            Program.main.Text = "[离线] 客户端仪表盘";
+            Program.main.label5.Text = "[离线]";
+            Program.main.label6.Text = "[离线]";
+            Program.main.label7.Text = "[离线]";
+            Program.main.label8.Text = "[未启用]";
+            Program.main.label15.Text = "[离线]";
+            Program.main.label16.Text = "[离线]";
 
-            listBoxServerFileList.Items.Clear();
-            button2.Enabled = true;
+            Program.main.listBoxServerFileList.Items.Clear();
+            Program.main.button2.Enabled = true;
         }
 
         /// <summary>
         /// 释放服务器连接资源
         /// </summary>
-        public void DisconServerSocket()
+        static void DisconServerSocket()
         {
             // 重置服务器对象
             Server = null;
@@ -214,23 +214,23 @@ namespace FileTransfer_Client
             isConnectStart = false;
 
             OutputLog("[客户端下线]");
-            button1.Text = "连接";
-            Text = "[离线] 客户端仪表盘";
-            label5.Text = "[离线]";
-            label6.Text = "[离线]";
-            label7.Text = "[离线]";
-            label8.Text = "[未启用]";
-            label15.Text = "[离线]";
-            label16.Text = "[离线]";
+            Program.main.button1.Text = "连接";
+            Program.main.Text = "[离线] 客户端仪表盘";
+            Program.main.label5.Text = "[离线]";
+            Program.main.label6.Text = "[离线]";
+            Program.main.label7.Text = "[离线]";
+            Program.main.label8.Text = "[未启用]";
+            Program.main.label15.Text = "[离线]";
+            Program.main.label16.Text = "[离线]";
 
-            listBoxServerFileList.Items.Clear();
-            button2.Enabled = true;
+            Program.main.listBoxServerFileList.Items.Clear();
+            Program.main.button2.Enabled = true;
         }
 
         /// <summary>
         /// 接收服务器信息
         /// </summary>
-        public void ReceiveMessage()
+        static void ReceiveMessage()
         {
             try
             {
@@ -266,7 +266,7 @@ namespace FileTransfer_Client
                     fileLength = fileList.Length;
 
                     // 清空原列表
-                    listBoxServerFileList.Items.Clear();
+                    Program.main.listBoxServerFileList.Items.Clear();
 
                     for (int i = 3; i < fileLength - 1; i++)
                     {
@@ -276,17 +276,17 @@ namespace FileTransfer_Client
                         // 在仪表盘里显示目录
                         if(flagDirPathDisp == 0)
                         {
-                            label8.Text = "";
+                            Program.main.label8.Text = "";
                             for(int j = 0; j<tmpDirLength - 2; j++)
                             {
-                                label8.Text += tmpDirPath[j] + '\\';
+                                Program.main.label8.Text += tmpDirPath[j] + '\\';
                             }
-                            label8.Text += tmpDirPath[tmpDirLength - 2];
+                            Program.main.label8.Text += tmpDirPath[tmpDirLength - 2];
                             flagDirPathDisp = 1;
                         }
 
                         OutputLog("[读入文件] " + tmpDirPath[tmpDirLength - 1]);
-                        listBoxServerFileList.Items.Add(tmpDirPath[tmpDirLength - 1]);
+                        Program.main.listBoxServerFileList.Items.Add(tmpDirPath[tmpDirLength - 1]);
                     }
                 }
 
@@ -334,7 +334,7 @@ namespace FileTransfer_Client
         /// 接收服务器消息 [字符串]
         /// </summary>
         /// <returns></returns>
-        public string ReceiveMessageStr()
+        static string ReceiveMessageStr()
         {
             try
             {
@@ -365,44 +365,44 @@ namespace FileTransfer_Client
         /// <param name="log">日志内容</param>
         /// <param name="isErrorLog">是否是错误日志</param>
         /// <param name="logFrom">日志来源</param>
-        public void OutputLog(string log, bool isFromServer = false, bool isErrorLog = false, string logFrom = "")
+        static void OutputLog(string log, bool isFromServer = false, bool isErrorLog = false, string logFrom = "")
         {
             if (isFromServer == true)
             {
-                textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][Server] " + log);
-                textBoxLog.AppendText("\r\n");
+                Program.main.textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][Server] " + log);
+                Program.main.textBoxLog.AppendText("\r\n");
 
                 return;
             }
 
             if (isErrorLog == true)
             {
-                textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][错误] " + log);
-                textBoxLog.AppendText("\r\n");
+                Program.main.textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][错误] " + log);
+                Program.main.textBoxLog.AppendText("\r\n");
 
                 return;
             }
 
             if (logFrom == "")
             {
-                textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][消息] " + log);
-                textBoxLog.AppendText("\r\n");
+                Program.main.textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][消息] " + log);
+                Program.main.textBoxLog.AppendText("\r\n");
 
                 return;
             }
 
-            textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][" + logFrom + "] " + log);
-            textBoxLog.AppendText("\r\n");
+            Program.main.textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][" + logFrom + "] " + log);
+            Program.main.textBoxLog.AppendText("\r\n");
         }
 
-        private void FormClientMain_FormClosed(object sender, FormClosedEventArgs e)
+        static void FormClientMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (isConnectStart)
             {
                 DisconConnect();
             }
 
-            Dispose(true);
+            Program.main.Dispose(true);
             Environment.Exit(0);
             Application.Exit();
             Application.ExitThread();
@@ -423,12 +423,12 @@ namespace FileTransfer_Client
             }
         }
 
-        public void ReceiveFileThread(int index)
+        static void ReceiveFileThread(int index)
         {
             ReceiveFile(index);
         }
 
-        public void ReceiveFile(int index)
+        static void ReceiveFile(int index)
         {
             string serverCommand;
             string[] fileInfo;
@@ -437,7 +437,7 @@ namespace FileTransfer_Client
             int fileSpace;
             int pkgNum;
 
-            OutputLog("[向服务器请求文件] " + listBoxServerFileList.Items[index]);
+            OutputLog("[向服务器请求文件] " + Program.main.listBoxServerFileList.Items[index]);
             // 末尾不加#就等着报错吧，字符串不自己断\0的恐惧
             Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3] + "#"));
             OutputLog("[等待服务器响应]");
@@ -501,7 +501,7 @@ namespace FileTransfer_Client
         /// 循环检查返回的消息内容是否包含内容 - 阻塞 用于异步线程等待响应消息
         /// </summary>
         /// <param name="checkStr"></param>
-        public void LoopCheckReceiveMsgStr(string checkStr)
+        static void LoopCheckReceiveMsgStr(string checkStr)
         {
             // 循环检测接收到的消息是否包含指定字符串
             while (!Regex.IsMatch(ReceiveMsgStr, checkStr))

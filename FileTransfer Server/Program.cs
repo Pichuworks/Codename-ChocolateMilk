@@ -8,6 +8,8 @@ namespace FileTransfer_Server
 {
     static class Program
     {
+        public static FormServerMain main;
+
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -16,7 +18,7 @@ namespace FileTransfer_Server
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormServerMain());
+            Application.Run(main = new FormServerMain());
         }
     }
 }

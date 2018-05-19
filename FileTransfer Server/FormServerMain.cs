@@ -19,42 +19,42 @@ namespace FileTransfer_Server
     public partial class FormServerMain : Form
     {
         // Socket服务器实例对象
-        public Socket Server;
+        static Socket Server;
 
         // 服务器端口
-        int startPort;
+        static int startPort;
 
         // 客户端容器
-        List<Socket> ClientList = new List<Socket>();
+        static List<Socket> ClientList = new List<Socket>();
 
         // 当前选中的客户端
-        public Socket SelectedClient;
+        static Socket SelectedClient;
 
-        public Socket TempListenClient;
+        static Socket TempListenClient;
 
-        public int ListenCount;
+        static int ListenCount;
 
-        public string AddressIP;
+        static string AddressIP;
 
-        public string ReceiveMsgStr = "";
+        static string ReceiveMsgStr = "";
 
-        public Byte[] ReceiveMsgByte;
+        static Byte[] ReceiveMsgByte;
 
-        public string ServerDirPath;
+        static string ServerDirPath;
 
-        public String[] fileList = null;
+        static String[] fileList = null;
 
-        public string serverFileList = "#connect#file#";
+        static string serverFileList = "#connect#file#";
 
-        public string[] ClientInfo = null;
+        static string[] ClientInfo = null;
 
-        int fileCounter;
+        static int fileCounter;
 
-        bool isServerStart;
+        static bool isServerStart;
 
         // SB多线程相关
-        string tmp_receivestream;
-        string tmp_filenext;
+        static string tmp_receivestream;
+        static string tmp_filenext;
 
         public FormServerMain()
         {
@@ -74,7 +74,7 @@ namespace FileTransfer_Server
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnStartServer_Click(object sender, EventArgs e)
+        static void btnStartServer_Click(object sender, EventArgs e)
         {
             if (isServerStart)
             {
@@ -88,9 +88,9 @@ namespace FileTransfer_Server
                 return;
             }
 
-            if (textBox1.Text != "")
+            if (Program.main.textBox1.Text != "")
             {
-                startPort = int.Parse(textBox1.Text);
+                startPort = int.Parse(Program.main.textBox1.Text);
                 isServerStart = ServerInit(startPort);
                 if (!isServerStart)
                 {
@@ -116,7 +116,7 @@ namespace FileTransfer_Server
         /// </summary>
         /// <param name="port">指定端口</param>
         /// <returns>是否上线？</returns>
-        bool ServerInit(int port)
+        static bool ServerInit(int port)
         {
             try
             {
@@ -125,12 +125,12 @@ namespace FileTransfer_Server
                 Server.Bind(new IPEndPoint(IPAddress.Parse(AddressIP), port));
                 Server.Listen(10);
                 OutputLog("[服务器上线] IP: " + AddressIP + " Port:" + port + "");
-                Text = "[在线] 服务器仪表盘 - IP: " + AddressIP + " Port: " + port;
-                label6.Text = AddressIP;
-                label7.Text = port.ToString();
-                label8.Text = "[在线]";
-                btnStartServer.Text = "下线";
-                btnBrowseDir.Enabled = false;
+                Program.main.Text = "[在线] 服务器仪表盘 - IP: " + AddressIP + " Port: " + port;
+                Program.main.label6.Text = AddressIP;
+                Program.main.label7.Text = port.ToString();
+                Program.main.label8.Text = "[在线]";
+                Program.main.btnStartServer.Text = "下线";
+                Program.main.btnBrowseDir.Enabled = false;
                 return true;
             }
             catch (Exception ex)
@@ -143,7 +143,7 @@ namespace FileTransfer_Server
         /// <summary>
         /// 服务器下线逻辑
         /// </summary>
-        public void CloseServer()
+        static public void CloseServer()
         {
             if (!isServerStart)
             {
@@ -160,20 +160,20 @@ namespace FileTransfer_Server
             //UpdateListBoxData();
             //listboxClient.Items.Clear();
 
-            label6.Text = "[离线]";
-            label7.Text = "[离线]";
-            label8.Text = "[离线]";
+            Program.main.label6.Text = "[离线]";
+            Program.main.label7.Text = "[离线]";
+            Program.main.label8.Text = "[离线]";
             OutputLog("[服务器下线]");
             isServerStart = false;
-            Text = "[离线] 服务器仪表盘";
-            btnStartServer.Text = "上线";
-            btnBrowseDir.Enabled = true;
+            Program.main.Text = "[离线] 服务器仪表盘";
+            Program.main.btnStartServer.Text = "上线";
+            Program.main.btnBrowseDir.Enabled = true;
         }
 
         /// <summary>
         /// 侦听连接
         /// </summary>
-        public void ListenConnect()
+        static void ListenConnect()
         {
             try
             {
@@ -220,7 +220,7 @@ namespace FileTransfer_Server
         /// <summary>
         /// 接收消息
         /// </summary>
-        public void ReceiveMessage()
+        static void ReceiveMessage()
         {
 
             try
@@ -286,12 +286,12 @@ namespace FileTransfer_Server
             }
         }
 
-        public void SendFileThread(string receiveResult, Socket tmp_client)
+        static void SendFileThread(string receiveResult, Socket tmp_client)
         {
             SendFile(receiveResult, tmp_client);
         }
 
-        public void SendFile(string receiveResult, Socket tmp_client)
+        static void SendFile(string receiveResult, Socket tmp_client)
         {
             string[] fileRequest = receiveResult.Split('#');
             int frLength = fileRequest.Length;
@@ -327,22 +327,22 @@ namespace FileTransfer_Server
         /// <summary>
         /// 更新列表
         /// </summary>
-        public void UpdateListBoxData()
+        static void UpdateListBoxData()
         {
             List<Socket> tempList = new List<Socket>();
 
             tempList.AddRange(ClientList);
 
-            listBoxClientList.DataSource = tempList;
-            listBoxClientList.DisplayMember = "RemoteEndPoint";
-            listBoxClientList.ValueMember = "Handle";
+            Program.main.listBoxClientList.DataSource = tempList;
+            Program.main.listBoxClientList.DisplayMember = "RemoteEndPoint";
+            Program.main.listBoxClientList.ValueMember = "Handle";
         }
 
         /// <summary>
         /// 向客户端广播报文
         /// </summary>
         /// <param name="Message">报文信息</param>
-        public void BroadcastMessage(string Message)
+        static void BroadcastMessage(string Message)
         {
             try
             {
@@ -361,7 +361,7 @@ namespace FileTransfer_Server
         /// 获取本机IP地址
         /// </summary>
         /// <returns></returns>
-        string GetAddressIP()
+        static string GetAddressIP()
         {
             string AddressIP = string.Empty;
             foreach (IPAddress _IPAddress in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
@@ -381,24 +381,24 @@ namespace FileTransfer_Server
         /// <param name="log">日志内容</param>
         /// <param name="isErrorLog">是否是错误日志</param>
         /// <param name="logFrom">日志来源</param>
-        public void OutputLog(string log, bool isErrorLog = false, string logFrom = "")
+        static void OutputLog(string log, bool isErrorLog = false, string logFrom = "")
         {
 
             if (isErrorLog == true)
             {
-                textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][错误] " + log);
-                textBoxLog.AppendText("\r\n");
+                Program.main.textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][错误] " + log);
+                Program.main.textBoxLog.AppendText("\r\n");
             }
             else if (logFrom == "")
             {
-                textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][消息] " + log);
-                textBoxLog.AppendText("\r\n");
+                Program.main.textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][消息] " + log);
+                Program.main.textBoxLog.AppendText("\r\n");
                 
             }
             else
             {
-                textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][" + logFrom + "] " + log);
-                textBoxLog.AppendText("\r\n");
+                Program.main.textBoxLog.AppendText("[" + DateTime.Now.ToString("HH:mm:ss") + "][" + logFrom + "] " + log);
+                Program.main.textBoxLog.AppendText("\r\n");
             }
             return;
 

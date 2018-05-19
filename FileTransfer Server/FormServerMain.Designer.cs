@@ -217,7 +217,7 @@
             this.btnStartServer.TabIndex = 2;
             this.btnStartServer.Text = "上线";
             this.btnStartServer.UseVisualStyleBackColor = true;
-            this.btnStartServer.Click += new System.EventHandler(this.btnStartServer_Click);
+            this.btnStartServer.Click += new System.EventHandler(btnStartServer_Click);
             // 
             // btnAbout
             // 
