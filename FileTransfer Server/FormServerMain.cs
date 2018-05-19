@@ -54,6 +54,9 @@ namespace FileTransfer_Server
 
         public FormServerMain()
         {
+            // Fuck the Thread!!!
+            CheckForIllegalCrossThreadCalls = false;
+
             InitializeComponent();
             label6.Text = "[离线]";
             label7.Text = "[离线]";
@@ -253,13 +256,8 @@ namespace FileTransfer_Server
 
                     if (Regex.IsMatch(receiveResult, "#file#request#"))
                     {
-                        string[] fileRequest = receiveResult.Split('#');
-                        int frLength = fileRequest.Length;
-                        OutputLog("---收到文件请求---");
-                        OutputLog("来自: " + tmp_client.RemoteEndPoint.ToString());
-                        OutputLog("学号: " + fileRequest[3] + " 姓名: " + fileRequest[4]);
-                        OutputLog("文件: " + fileRequest[5]);
-                        OutputLog("------------------");
+                        Thread thread = new Thread(() => SendFileThread(receiveResult, tmp_client));
+                        thread.Start();
                     }
 
                     ReceiveMsgStr = receiveResult;
@@ -272,6 +270,22 @@ namespace FileTransfer_Server
                 // 显示错误信息
                 OutputLog(ex.Message.ToString(), true);
             }
+        }
+
+        public void SendFileThread(string receiveResult, Socket tmp_client)
+        {
+            SendFile(receiveResult, tmp_client);
+        }
+
+        public void SendFile(string receiveResult, Socket tmp_client)
+        {
+            string[] fileRequest = receiveResult.Split('#');
+            int frLength = fileRequest.Length;
+            OutputLog("---收到文件请求---");
+            OutputLog("来自: " + tmp_client.RemoteEndPoint.ToString());
+            OutputLog("学号: " + fileRequest[3] + " 姓名: " + fileRequest[4]);
+            OutputLog("文件: " + fileRequest[5]);
+            OutputLog("------------------");
         }
 
         /// <summary>

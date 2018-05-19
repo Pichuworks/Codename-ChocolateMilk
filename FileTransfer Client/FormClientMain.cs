@@ -406,6 +406,13 @@ namespace FileTransfer_Client
                 // MessageBox.Show(fileList[index + 3]);
                 OutputLog("[向服务器请求文件]" + listBoxServerFileList.Items[index]);
                 Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3]));
+                //OutputLog("[等待服务器响应]");
+                //LoopCheckReceiveMsgStr("#file#");
+                //if (Regex.IsMatch(ReceiveMsgStr, "#file#info#"))
+                //{
+                //    OutputLog("[服务器响应]", isFromServer: true);
+                //}
+
             }
         }
 
@@ -432,6 +439,19 @@ namespace FileTransfer_Client
                 // MessageBox.Show(fileList[index + 3]);
                 OutputLog("[向服务器请求文件]" + fileList[index + 3]);
                 Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName +" #" + fileList[index + 3]));
+            }
+        }
+
+        /// <summary>
+        /// 循环检查返回的消息内容是否包含内容 - 阻塞 用于异步线程等待响应消息
+        /// </summary>
+        /// <param name="checkStr"></param>
+        public void LoopCheckReceiveMsgStr(string checkStr)
+        {
+            // 循环检测接收到的消息是否包含指定字符串
+            while (!Regex.IsMatch(ReceiveMsgStr, checkStr))
+            {
+
             }
         }
     }
