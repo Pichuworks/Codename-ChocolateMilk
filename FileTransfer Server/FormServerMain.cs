@@ -304,7 +304,7 @@ namespace FileTransfer_Server
             tmp_client.Send(Encoding.Unicode.GetBytes("#filedata#receive#" + fileRequest[5] + "#" + lSize.ToString() + "#" + pkgNum.ToString() + "#"));
 
             // 分片打出
-            // OutputLog("[开始发送数据]");
+            OutputLog("[开始发送数据]");
 
 
 
