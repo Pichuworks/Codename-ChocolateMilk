@@ -213,6 +213,7 @@
             this.button4.TabIndex = 4;
             this.button4.Text = "下载文件";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // listBoxServerFileList
             // 
@@ -222,6 +223,7 @@
             this.listBoxServerFileList.Name = "listBoxServerFileList";
             this.listBoxServerFileList.Size = new System.Drawing.Size(220, 316);
             this.listBoxServerFileList.TabIndex = 0;
+            this.listBoxServerFileList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxServerFileList_MouseDoubleClick);
             // 
             // groupBox3
             // 
@@ -282,6 +284,7 @@
             this.button2.TabIndex = 9;
             this.button2.Text = "更新信息";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // textBox4
             // 

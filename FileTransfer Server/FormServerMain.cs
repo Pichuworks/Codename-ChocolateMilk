@@ -123,6 +123,7 @@ namespace FileTransfer_Server
                 label7.Text = port.ToString();
                 label8.Text = "[在线]";
                 btnStartServer.Text = "下线";
+                btnBrowseDir.Enabled = false;
                 return true;
             }
             catch (Exception ex)
@@ -159,6 +160,7 @@ namespace FileTransfer_Server
             isServerStart = false;
             Text = "[离线] 服务器仪表盘";
             btnStartServer.Text = "上线";
+            btnBrowseDir.Enabled = true;
         }
 
         /// <summary>
@@ -226,7 +228,7 @@ namespace FileTransfer_Server
                         return;
                     }
 
-                    byte[] result = new byte[9000];
+                    byte[] result = new byte[65535];
 
                     int receiveLength = tmp_client.Receive(result);
 
@@ -236,23 +238,29 @@ namespace FileTransfer_Server
                     if (Regex.IsMatch(receiveResult, "#connect#discon#"))
                     {
                         OutputLog("[客户端下线]", logFrom: tmp_client.RemoteEndPoint.ToString());
-
                         ClientList.Remove(CheckTmpClient);
-
                         UpdateListBoxData();
-
                         return;
                     }
 
+                    if (Regex.IsMatch(receiveResult, "#connect#userdata#"))
+                    {
+                        string[] stdData = receiveResult.Split('#');
+                        int stdDataLength = stdData.Length;
+                        OutputLog(tmp_client.RemoteEndPoint.ToString() + ": 学号: " + stdData[3] + " 姓名: " + stdData[4]);
+                        UpdateListBoxData();
+                    }
 
-                    //if (Regex.IsMatch(receiveResult, "#file#info#"))
-                    //{
-                    //    string[] fileinfo = receiveResult.Split('#');
-
-                    //    new Form_ReceiveFile(new { FileId = fileinfo[3], Name = fileinfo[4], Length = long.Parse(fileinfo[5]) }, tmp_client).ShowDialog();
-
-                    //}
-
+                    if (Regex.IsMatch(receiveResult, "#file#request#"))
+                    {
+                        string[] fileRequest = receiveResult.Split('#');
+                        int frLength = fileRequest.Length;
+                        OutputLog("---收到文件请求---");
+                        OutputLog("来自: " + tmp_client.RemoteEndPoint.ToString());
+                        OutputLog("学号: " + fileRequest[3] + " 姓名: " + fileRequest[4]);
+                        OutputLog("文件: " + fileRequest[5]);
+                        OutputLog("------------------");
+                    }
 
                     ReceiveMsgStr = receiveResult;
                     ReceiveMsgByte = result;
@@ -297,11 +305,6 @@ namespace FileTransfer_Server
             {
                 OutputLog(ex.Message.ToString(), true);
             }
-        }
-
-        public void SendFileList(string FileList)
-        {
-
         }
 
         /// <summary>
@@ -402,6 +405,7 @@ namespace FileTransfer_Server
                     serverFileList = serverFileList + fileList[i] + "#"; 
                 }
                 serverFileList = serverFileList + fileList[fileCounter - 1];
+
                 OutputLog("[读入文件] " + fileList[fileCounter - 1]);
 
                 // Debug
@@ -435,6 +439,9 @@ namespace FileTransfer_Server
             Application.ExitThread();
         }
 
+        private void listBoxClientList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
 
+        }
     }
 }

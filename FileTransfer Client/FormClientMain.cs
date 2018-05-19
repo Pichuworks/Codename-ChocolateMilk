@@ -50,6 +50,12 @@ namespace FileTransfer_Client
 
             label15.Text = "[未启用]";
             label16.Text = "[未启用]";
+
+            // Debug
+            stdNo = "PichuTheNeko";
+            stdName = "橘猫昊昊";
+            label15.Text = "[离线]";
+            label16.Text = "[离线]";
         }
 
         /// <summary>
@@ -63,6 +69,12 @@ namespace FileTransfer_Client
             {
                 // 调用关闭服务器方法
                 DisconConnect();
+                return;
+            }
+
+            if(stdNo == "" || stdName == "")
+            {
+                MessageBox.Show("学号/姓名为空！");
                 return;
             }
 
@@ -131,10 +143,17 @@ namespace FileTransfer_Client
                 button1.Text = "断开";
                 Text = "[在线] 客户端仪表盘 - 服务器IP: " + ServerIP + " Port: " + ServerPort;
 
+                // 打学号和姓名
+                Server.Send(Encoding.Unicode.GetBytes("#connect#userdata#" + stdNo + "#" + stdName));
+
                 // 仪表盘状态
                 label5.Text = ServerIP;
                 label6.Text = ServerPort;
                 label7.Text = "[联机]";
+                label15.Text = stdNo;
+                label16.Text = stdName;
+
+                button2.Enabled = false;
 
                 // 设置连接状态
                 isConnectStart = true;
@@ -173,6 +192,11 @@ namespace FileTransfer_Client
             label6.Text = "[离线]";
             label7.Text = "[离线]";
             label8.Text = "[未启用]";
+            label15.Text = "[离线]";
+            label16.Text = "[离线]";
+
+            listBoxServerFileList.Items.Clear();
+            button2.Enabled = true;
         }
 
         /// <summary>
@@ -192,6 +216,11 @@ namespace FileTransfer_Client
             label6.Text = "[离线]";
             label7.Text = "[离线]";
             label8.Text = "[未启用]";
+            label15.Text = "[离线]";
+            label16.Text = "[离线]";
+
+            listBoxServerFileList.Items.Clear();
+            button2.Enabled = true;
         }
 
         /// <summary>
@@ -213,29 +242,25 @@ namespace FileTransfer_Client
                 // 消息 - 连接关闭
                 if (Regex.IsMatch(receiveResult, "#connect#close#"))
                 {
-                    // 输出
                     OutputLog("[服务器下线]");
-                    // 调用方法断开连接
                     DisconConnect();
 
                     return;
                 }
 
+                // 消息 - 目录文件
                 if (Regex.IsMatch(receiveResult, "#connect#file#"))
                 {
+                    // 标签初始化
+                    flagDirPathDisp = 0;
+
                     // 分隔字符串
                     fileList = receiveResult.Split('#');
                     fileLength = fileList.Length;
 
-                    // Debug
-                    for(int i=3; i<fileLength; i++)
-                    {
-                        OutputLog("[读入文件] " + fileList[i]);
-                    }
-
-                    flagDirPathDisp = 0;
-
+                    // 清空原列表
                     listBoxServerFileList.Items.Clear();
+
                     for (int i = 3; i < fileLength; i++)
                     {
                         string[] tmpDirPath = fileList[i].Split('\\');
@@ -253,6 +278,7 @@ namespace FileTransfer_Client
                             flagDirPathDisp = 1;
                         }
 
+                        OutputLog("[读入文件] " + tmpDirPath[tmpDirLength - 1]);
                         listBoxServerFileList.Items.Add(tmpDirPath[tmpDirLength - 1]);
                     }
                 }
@@ -370,6 +396,43 @@ namespace FileTransfer_Client
         private void button5_Click(object sender, EventArgs e)
         {
             textBoxLog.Text = "";
+        }
+
+        private void listBoxServerFileList_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = listBoxServerFileList.SelectedIndex;
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                // MessageBox.Show(fileList[index + 3]);
+                OutputLog("[向服务器请求文件]" + listBoxServerFileList.Items[index]);
+                Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName + " #" + fileList[index + 3]));
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (textBox3.Text != "" && textBox4.Text != "")
+            {
+                stdNo = textBox3.Text;
+                stdName = textBox4.Text;
+                label15.Text = "[离线]";
+                label16.Text = "[离线]";
+            }
+            else
+            {
+                MessageBox.Show("学号/姓名为空！");
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            int index = listBoxServerFileList.SelectedIndex;
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                // MessageBox.Show(fileList[index + 3]);
+                OutputLog("[向服务器请求文件]" + fileList[index + 3]);
+                Server.Send(Encoding.Unicode.GetBytes("#file#request#" + stdNo + "#" + stdName +" #" + fileList[index + 3]));
+            }
         }
     }
 }

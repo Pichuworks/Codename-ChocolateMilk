@@ -161,6 +161,7 @@
             this.listBoxClientList.Name = "listBoxClientList";
             this.listBoxClientList.Size = new System.Drawing.Size(220, 364);
             this.listBoxClientList.TabIndex = 0;
+            this.listBoxClientList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxClientList_MouseDoubleClick);
             // 
             // groupBox3
             // 
@@ -233,7 +234,7 @@
             this.btnBrowseDir.Name = "btnBrowseDir";
             this.btnBrowseDir.Size = new System.Drawing.Size(139, 50);
             this.btnBrowseDir.TabIndex = 3;
-            this.btnBrowseDir.Text = "浏览目录";
+            this.btnBrowseDir.Text = "选择目录";
             this.btnBrowseDir.UseVisualStyleBackColor = true;
             this.btnBrowseDir.Click += new System.EventHandler(this.btnBrowseDir_Click);
             // 
