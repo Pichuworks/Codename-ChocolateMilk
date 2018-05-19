@@ -41,6 +41,15 @@ namespace FileTransfer_Client
         // SB多线程
         static string tmpFileRes = "";
 
+        static int fuckFileStream = 0;
+        static string fuckFileStreamStr = "";
+
+        static int fuckFileEnd = 0;
+        static string fuckFileEndStr = "";
+
+        static List<byte[]> TempFileByteList;
+        static string savePath;
+
         public FormClientMain()
         {
             InitializeComponent();
@@ -296,7 +305,77 @@ namespace FileTransfer_Client
                     OutputLog("[ReceiveMessage 收到服务器响应] - " + ReceiveMsgStr);
                     tmpFileRes = ReceiveMsgStr;
                 }
-                
+
+                if (Regex.IsMatch(receiveResult, "#file#stream#"))
+                {
+                    fuckFileStreamStr = ReceiveMsgStr;
+                    OutputLog("[ReceiveMessage 收到 #file#stream#] - " + fuckFileStreamStr);
+
+                    OutputLog("[ReceiveMessage 收到 #file#end#] - " + fuckFileEndStr);
+                    string receiveMsg = fuckFileStreamStr;
+                    Server.Send(Encoding.Unicode.GetBytes("#file#receivestream#"));
+
+                    byte[] resultFileByte = ReceiveMessageByte(Server);
+
+                    string[] fileinfo = receiveMsg.Split('#');
+
+                    int fileByteLength = int.Parse(fileinfo[4]);
+
+                    // int fileByteLength = 8192;
+
+                    byte[] temp = resultFileByte;
+
+                    byte[] fileBuffer = new byte[fileByteLength];
+
+                    Array.Copy(temp, fileBuffer, fileByteLength);
+
+                    TempFileByteList.Add(fileBuffer);
+
+                    fuckFileStream = 1;
+                }
+
+                if (Regex.IsMatch(receiveResult, "#file#end#"))
+                {
+                     fuckFileEndStr = ReceiveMsgStr;
+                    OutputLog("[ReceiveMessage 收到 #file#end#] - " + fuckFileEndStr);
+
+                    string receiveMsg = fuckFileStreamStr;
+                    // Server.Send(Encoding.Unicode.GetBytes("#file#receivestream#"));
+
+                    byte[] resultFileByte = ReceiveMessageByte(Server);
+
+                    string[] fileinfo = receiveMsg.Split('#');
+
+                    int fileByteLength = int.Parse(fileinfo[4]);
+
+                    // int fileByteLength = 8192;
+
+                    byte[] temp = resultFileByte;
+
+                    byte[] fileBuffer = new byte[fileByteLength];
+
+                    Array.Copy(temp, fileBuffer, fileByteLength);
+
+                    TempFileByteList.Add(fileBuffer);
+
+
+
+
+                    FileStream fileStream = File.Create(savePath);
+
+                    TempFileByteList.ForEach(f =>
+                    {
+                        byte[] b = f;
+
+                        fileStream.Write(b, 0, b.Length);
+                    });
+
+                    // Server.Send(Encoding.Unicode.GetBytes("#file#next#"));
+
+                    // fuckFileStream = 0;
+                    fuckFileEnd = 1;
+                }
+
 
                 // 保存消息字符串 用于异步访问
                 // ReceiveMsgStr = receiveResult;
@@ -475,10 +554,10 @@ namespace FileTransfer_Client
             pkgNum = Convert.ToInt32(fileInfo[5]);
 
             OutputLog("[解析] 文件名: " + fileName + " 字节数: " + fileSpace.ToString() + " 分片数: " + pkgNum.ToString());
-            string savePath = "D:\\fuckyouSocket\\" + fileName;
+            savePath = "D:\\fuckyouSocket\\" + fileName;
 
             // 现在该接收文件了！
-            List<byte[]> TempFileByteList = new List<byte[]>();
+            TempFileByteList = new List<byte[]>();
             OutputLog("Nya~0");
             while (true)
             {
@@ -493,15 +572,25 @@ namespace FileTransfer_Client
                 // if (Regex.IsMatch(receiveMsg, "#file#stream#"))
                 // {
 
+                // 这里需要考虑fileEnd么？
+                while(fuckFileStream == 0 && fuckFileEnd == 0)
+                {
+                    OutputLog("fuckFileStream == 0 && fuckFileEnd == 0");
+                }
+
+                if(fuckFileStream == 1)
+                {
+                    /*
+                    receiveMsg = fuckFileStreamStr;
                     Server.Send(Encoding.Unicode.GetBytes("#file#receivestream#"));
 
                     byte[] resultFileByte = ReceiveMessageByte(Server);
 
-                //string[] fileinfo = receiveMsg.Split('#');
+                    string[] fileinfo = receiveMsg.Split('#');
 
-                //int fileByteLength = int.Parse(fileinfo[4]);
+                    int fileByteLength = int.Parse(fileinfo[4]);
 
-                    int fileByteLength = 8192;
+                    // int fileByteLength = 8192;
 
                     byte[] temp = resultFileByte;
 
@@ -513,14 +602,42 @@ namespace FileTransfer_Client
 
 
                     Server.Send(Encoding.Unicode.GetBytes("#file#next#"));
-               // }
 
-                //if (Regex.IsMatch(receiveMsg, "#file#end#"))
-                //{
+                    fuckFileStream = 0;
+                    */
+                }
 
+                if(fuckFileEnd == 1)
+                {
+
+                    // }
+
+                    //if (Regex.IsMatch(receiveMsg, "#file#end#"))
+                    //{
                     OutputLog("[正在写入文件]");
-
+                    /*
                     // string[] fileinfo = receiveMsg.Split('#');
+                    //
+                     receiveMsg = fuckFileStreamStr;
+                    // Server.Send(Encoding.Unicode.GetBytes("#file#receivestream#"));
+
+                    byte[] resultFileByte = ReceiveMessageByte(Server);
+
+                    string[] fileinfo = receiveMsg.Split('#');
+
+                    int fileByteLength = int.Parse(fileinfo[4]);
+
+                    // int fileByteLength = 8192;
+
+                    byte[] temp = resultFileByte;
+
+                    byte[] fileBuffer = new byte[fileByteLength];
+
+                    Array.Copy(temp, fileBuffer, fileByteLength);
+
+                    TempFileByteList.Add(fileBuffer);
+                    //
+                    */
 
                     FileStream fileStream = File.Create(savePath);
 
@@ -535,13 +652,16 @@ namespace FileTransfer_Client
                     fileStream.Close();
 
                     OutputLog("[接收完成]");
+
                     return;
-               // }
+                    // }
+                }
+
 
                 // 结束当前线程
                 OutputLog("[接收文件完成]");
-                Thread.CurrentThread.Suspend();
-                Thread.CurrentThread.Abort();
+               Thread.CurrentThread.Suspend();
+               Thread.CurrentThread.Abort();
             }
         }
 

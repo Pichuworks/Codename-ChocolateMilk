@@ -56,6 +56,9 @@ namespace FileTransfer_Server
         static string tmp_receivestream;
         static string tmp_filenext;
 
+        static int fuck_receivestream = 0;
+        static int fuck_filenext = 0;
+
         public FormServerMain()
         {
             // Fuck the Thread!!!
@@ -268,10 +271,26 @@ namespace FileTransfer_Server
                         thread.Start();
                     }
 
+                    /*
                     if (Regex.IsMatch(receiveResult, "#file#receivestream#"))
                     {
                         OutputLog("[ReceiveMessage 收到 #file#receivestream#] - " + ReceiveMsgStr);
                         tmp_receivestream = ReceiveMsgStr;
+                    }
+                    */
+
+                    if (Regex.IsMatch(receiveResult, "#file#receivestream#"))
+                    {
+                        OutputLog("[ReceiveMessage 收到 #file#receivestream#] - " + ReceiveMsgStr);
+                        fuck_receivestream = 1;
+                    }
+
+
+
+                    if (Regex.IsMatch(receiveResult, "#file#next#"))
+                    {
+                        OutputLog("[ReceiveMessage 收到 #file#next#] - " + ReceiveMsgStr);
+                        fuck_filenext = 1;
                     }
 
                     ReceiveMsgStr = receiveResult;
@@ -350,25 +369,49 @@ namespace FileTransfer_Server
 
                 OutputLog("Nya~5");
 
-           //     LoopCheckReceiveMsgStr("#file#receivestream#");
+                //     LoopCheckReceiveMsgStr("#file#receivestream#");
 
-             //   if (Regex.IsMatch(ReceiveMsgStr, "#file#receivestream#"))
-             //   {
+                //   if (Regex.IsMatch(ReceiveMsgStr, "#file#receivestream#"))
+                //   {
+                int tmpflag0 = 0;
+               // while (fuck_receivestream == 0)
+                {
+                 //   if (tmpflag0 == 0)
+                    {
+                   //     tmpflag0 = 1;
+                   //     OutputLog("fuck_receivestream 循环中……");
+                    }
+                }
+
+
                     tmp_client.Send(buffer);
-             //   }
+                    fuck_receivestream = 0;
 
+                //   }
 
 
                 // progressBar.Value += SendLength;
 
                 buffer = new byte[9000];
 
-               // LoopCheckReceiveMsgStr("#file#next#");
+                tmpflag0 = 0;
+                // LoopCheckReceiveMsgStr("#file#next#");
+               // while (fuck_filenext == 0)
+                {
+                    //if (tmpflag0 == 0)
+                    {
+                      //  tmpflag0 = 1;
+                      //  OutputLog("fuck_filenext 循环中……");
+                    }
+                }
 
-               // if (Regex.IsMatch(ReceiveMsgStr, "#file#next#"))
-               // {
+                    fuck_filenext = 1;
                     continue;
-               // }
+
+                // if (Regex.IsMatch(ReceiveMsgStr, "#file#next#"))
+                // {
+
+                // }
 
 
             }
