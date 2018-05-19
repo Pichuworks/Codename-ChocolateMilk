@@ -302,8 +302,10 @@ namespace FileTransfer_Server
 
             // 获得文件大小
             long lSize = 0;
-            lSize = new FileInfo(fileRequest[5] + "\\").Length;
+            lSize = new FileInfo(fileRequest[5]).Length;
             OutputLog("[文件大小] " + lSize.ToString());
+
+            string fileId = fileRequest[3] + "_" + fileRequest[4];
 
             // 计算需要分多少片
             long pkgNum = lSize / 256;
@@ -318,10 +320,80 @@ namespace FileTransfer_Server
             // 分片打出
             OutputLog("[开始发送数据]");
 
-            
+            //
+
+            byte[] buffer = new byte[9000];
+            byte[] fileEnd = Encoding.Unicode.GetBytes("#file#end#" + fileId + "#");
+            OutputLog("Nya~0");
+            FileStream fileStream = new FileInfo(fileRequest[5]).OpenRead();
+            OutputLog("Nya~1");
+            long length = fileStream.Length;
+            OutputLog("Nya~2");
+
+            byte[] fileByte;
+
+            int SendLength = 0;
+
+            while ((SendLength = fileStream.Read(buffer, 0, length <= 8192 ? (int)length : 8192)) != 0)
+            {
+                OutputLog("Nya~3");
+
+                fileByte = new byte[SendLength];
+
+                Array.Copy(buffer, fileByte, SendLength);
+
+                byte[] fileHead = Encoding.Unicode.GetBytes("#file#stream#" + fileId + "#" + SendLength + "#");
+
+                OutputLog("Nya~4");
+
+                tmp_client.Send(fileHead);
+
+                OutputLog("Nya~5");
+
+           //     LoopCheckReceiveMsgStr("#file#receivestream#");
+
+             //   if (Regex.IsMatch(ReceiveMsgStr, "#file#receivestream#"))
+             //   {
+                    tmp_client.Send(buffer);
+             //   }
+
+
+
+                // progressBar.Value += SendLength;
+
+                buffer = new byte[9000];
+
+               // LoopCheckReceiveMsgStr("#file#next#");
+
+               // if (Regex.IsMatch(ReceiveMsgStr, "#file#next#"))
+               // {
+                    continue;
+               // }
+
+
+            }
+
+            SendLength = 0;
+
+
+            tmp_client.Send(fileEnd);
+
+            OutputLog("[发送完成]");
+
+            fileStream.Close();
+            //
 
             OutputLog("[服务器响应操作] " + "#filedata#receive#" + fileRequest[5]);
             OutputLog("------------------");
+        }
+
+        static void LoopCheckReceiveMsgStr(string checkStr)
+        {
+            // 循环检测接收到的消息是否包含指定字符串
+            while (!Regex.IsMatch(ReceiveMsgStr, checkStr))
+            {
+                OutputLog("LoopCheckReceiveMsgStr: " + checkStr);
+            }
         }
 
         /// <summary>

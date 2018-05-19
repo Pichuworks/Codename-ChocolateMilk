@@ -334,6 +334,7 @@ namespace FileTransfer_Client
         /// 接收服务器消息 [字符串]
         /// </summary>
         /// <returns></returns>
+        /// /*
         static string ReceiveMessageStr()
         {
             try
@@ -357,6 +358,21 @@ namespace FileTransfer_Client
 
                 return "";
             }
+        }
+
+        static string ReceiveMessageStr(Socket client)
+        {
+            OutputLog("ReceiveMessageStr~");
+
+            byte[] result = new byte[9000];
+
+                int receiveLength = client.Receive(result);
+
+                string receiveResult = Encoding.Unicode.GetString(result);
+
+                OutputLog("ReceiveMessageStr" + receiveResult);
+
+                return receiveResult;
         }
 
         /// <summary>
@@ -459,16 +475,94 @@ namespace FileTransfer_Client
             pkgNum = Convert.ToInt32(fileInfo[5]);
 
             OutputLog("[解析] 文件名: " + fileName + " 字节数: " + fileSpace.ToString() + " 分片数: " + pkgNum.ToString());
+            string savePath = "D:\\fuckyouSocket\\" + fileName;
 
             // 现在该接收文件了！
-
             List<byte[]> TempFileByteList = new List<byte[]>();
+            OutputLog("Nya~0");
+            while (true)
+            {
+                OutputLog("Nya~1");
+                byte[] result = new byte[9000];
+                OutputLog("Nya~2");
+                string receiveMsg;
+                // = ReceiveMessageStr();
+                OutputLog("Nya~3");
+                // OutputLog("receiveMsg = " + receiveMsg);
 
-            // 结束当前线程
-            OutputLog("[接收文件完成]");
-            Thread.CurrentThread.Suspend();
-            Thread.CurrentThread.Abort();
+                // if (Regex.IsMatch(receiveMsg, "#file#stream#"))
+                // {
 
+                    Server.Send(Encoding.Unicode.GetBytes("#file#receivestream#"));
+
+                    byte[] resultFileByte = ReceiveMessageByte(Server);
+
+                //string[] fileinfo = receiveMsg.Split('#');
+
+                //int fileByteLength = int.Parse(fileinfo[4]);
+
+                    int fileByteLength = 8192;
+
+                    byte[] temp = resultFileByte;
+
+                    byte[] fileBuffer = new byte[fileByteLength];
+
+                    Array.Copy(temp, fileBuffer, fileByteLength);
+
+                    TempFileByteList.Add(fileBuffer);
+
+
+                    Server.Send(Encoding.Unicode.GetBytes("#file#next#"));
+               // }
+
+                //if (Regex.IsMatch(receiveMsg, "#file#end#"))
+                //{
+
+                    OutputLog("[正在写入文件]");
+
+                    // string[] fileinfo = receiveMsg.Split('#');
+
+                    FileStream fileStream = File.Create(savePath);
+
+                    TempFileByteList.ForEach(f =>
+                    {
+                        byte[] b = f;
+
+                        fileStream.Write(b, 0, b.Length);
+                    });
+
+
+                    fileStream.Close();
+
+                    OutputLog("[接收完成]");
+                    return;
+               // }
+
+                // 结束当前线程
+                OutputLog("[接收文件完成]");
+                Thread.CurrentThread.Suspend();
+                Thread.CurrentThread.Abort();
+            }
+        }
+
+        static byte[] ReceiveMessageByte(Socket client)
+        {
+            try
+            {
+                byte[] result = new byte[9000];
+
+                int receiveLength = client.Receive(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // 显示错误信息
+
+                OutputLog(ex.Message.ToString(), true);
+
+                return new byte[0];
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
