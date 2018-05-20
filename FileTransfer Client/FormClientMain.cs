@@ -475,7 +475,7 @@ namespace FileTransfer_Client
             pkgNum = Convert.ToInt32(fileInfo[5]);
 
             OutputLog("[解析] 文件名: " + fileName + " 字节数: " + fileSpace.ToString() + " 分片数: " + pkgNum.ToString());
-            string savePath = "D:\\fuckyouSocket\\" + fileName;
+            string savePath = "D:\\fuckyouSocket\\" + stdNo + "_" + stdName + "_" + fileName;
 
             // 现在该接收文件了！
             List<byte[]> TempFileByteList = new List<byte[]>();
@@ -502,6 +502,7 @@ namespace FileTransfer_Client
                 //int fileByteLength = int.Parse(fileinfo[4]);
 
                     int fileByteLength = 8192;
+
 
                     byte[] temp = resultFileByte;
 
@@ -535,44 +536,62 @@ namespace FileTransfer_Client
                 // 合并文件流
                 int eachReadLength = 256;
                 int loadPkg = 0;
-                FileStream fromFile = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                FileStream toFile = new FileStream(savePath, FileMode.Create, FileAccess.Write);
                 int toLaunched = 0;
-                if (eachReadLength < fromFile.Length)
+
+                FileStream src = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                FileStream dist = new FileStream(savePath, FileMode.Create, FileAccess.Write);
+
+                
+                if (eachReadLength < src.Length)
                 {
+
                     byte[] buffer = new byte[eachReadLength];
                     long launched = 0;
-                    while (launched <= fromFile.Length - eachReadLength)
+
+                    while (launched <= src.Length - eachReadLength)
                     {
                         loadPkg++;
                         OutputLog("正在合并第 " + loadPkg + "/" + pkgNum + " 组数据");
-                        toLaunched = fromFile.Read(buffer, 0, eachReadLength);
-                        fromFile.Flush();
-                        toFile.Write(buffer, 0, eachReadLength);
-                        toFile.Flush();
-                        // 字节流的当前位置
-                        toFile.Position = fromFile.Position;
+
+                        toLaunched = src.Read(buffer, 0, eachReadLength);
+
+                        src.Flush();
+                        dist.Write(buffer, 0, eachReadLength);
+                        dist.Flush();
+
+                        /*
+                         f = new byte[256]; 
+                         byte[] b = f;
+                         fileStream.Write(b,toLaunched, b.Length);
+                         */
+
+                        dist.Position = src.Position;
                         launched += toLaunched;  
                     }
-                    int left = (int)(fromFile.Length - launched);
-                    toLaunched = fromFile.Read(buffer, 0, left);
-                    fromFile.Flush();
-                    toFile.Write(buffer, 0, left);
-                    toFile.Flush();
+                    int left = (int)(src.Length - launched);
+                    toLaunched = src.Read(buffer, 0, left);
+
+                    src.Flush();
+                    dist.Write(buffer, 0, left);
+
+                    dist.Flush();
+
                 }
                 else
                 {
                     loadPkg++;
                     OutputLog("正在合并第 " + loadPkg + "/" + pkgNum + " 组数据");
-                    byte[] buffer = new byte[fromFile.Length];
-                    fromFile.Read(buffer, 0, buffer.Length);
-                    fromFile.Flush();
-                    toFile.Write(buffer, 0, buffer.Length);
-                    toFile.Flush();
+                    byte[] buffer = new byte[src.Length];
+
+                    src.Read(buffer, 0, buffer.Length);
+                    src.Flush();
+
+                    dist.Write(buffer, 0, buffer.Length);
+                    dist.Flush();
                 }
                 OutputLog("[合并文件完成]");    // 合并文件
-                fromFile.Close();
-                toFile.Close();
+                src.Close();
+                dist.Close();
 
               
                 
