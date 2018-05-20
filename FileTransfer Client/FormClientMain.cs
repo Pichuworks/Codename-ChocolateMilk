@@ -501,7 +501,7 @@ namespace FileTransfer_Client
 
                 //int fileByteLength = int.Parse(fileinfo[4]);
 
-                    int fileByteLength = 8192;
+                    int fileByteLength = 256;
 
 
                     byte[] temp = resultFileByte;
