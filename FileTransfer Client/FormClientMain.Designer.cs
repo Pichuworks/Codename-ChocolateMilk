@@ -285,6 +285,7 @@
             this.button3.TabIndex = 10;
             this.button3.Text = "关于";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button2
             // 
@@ -385,7 +386,7 @@
             this.MaximizeBox = false;
             this.Name = "FormClientMain";
             this.Text = "[离线] 客户端仪表盘";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormClientMain_FormClosed);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(FormClientMain_FormClosed);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

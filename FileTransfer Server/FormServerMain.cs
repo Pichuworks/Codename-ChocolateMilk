@@ -563,5 +563,10 @@ namespace FileTransfer_Server
         {
 
         }
+
+        private void btnAbout_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("计算机网络课程设计\n\r代号巧克力牛奶\n\r服务器端于 May 20th, '18 编译\n\rBy PichuTheNeko");
+        }
     }
 }
