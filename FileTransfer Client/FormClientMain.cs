@@ -520,28 +520,69 @@ namespace FileTransfer_Client
 
                     OutputLog("[正在写入文件]");
 
-                    // string[] fileinfo = receiveMsg.Split('#');
+                // string[] fileinfo = receiveMsg.Split('#');
 
-                    FileStream fileStream = File.Create(savePath);
+                /* FileStream fileStream = File.Create(savePath);
 
-                    TempFileByteList.ForEach(f =>
+                 TempFileByteList.ForEach(f =>
+                 {
+                     byte[] b = f;
+                     fileStream.Write(b, 0, b.Length);
+                 });
+                fileStream.Close();
+                */
+
+                // 合并文件流
+                int eachReadLength = 256;
+                int loadPkg = 0;
+                FileStream fromFile = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                FileStream toFile = new FileStream(savePath, FileMode.Create, FileAccess.Write);
+                int toLaunched = 0;
+                if (eachReadLength < fromFile.Length)
+                {
+                    byte[] buffer = new byte[eachReadLength];
+                    long launched = 0;
+                    while (launched <= fromFile.Length - eachReadLength)
                     {
-                        byte[] b = f;
+                        loadPkg++;
+                        OutputLog("正在合并第 " + loadPkg + "/" + pkgNum + " 组数据");
+                        toLaunched = fromFile.Read(buffer, 0, eachReadLength);
+                        fromFile.Flush();
+                        toFile.Write(buffer, 0, eachReadLength);
+                        toFile.Flush();
+                        // 字节流的当前位置
+                        toFile.Position = fromFile.Position;
+                        launched += toLaunched;  
+                    }
+                    int left = (int)(fromFile.Length - launched);
+                    toLaunched = fromFile.Read(buffer, 0, left);
+                    fromFile.Flush();
+                    toFile.Write(buffer, 0, left);
+                    toFile.Flush();
+                }
+                else
+                {
+                    loadPkg++;
+                    OutputLog("正在合并第 " + loadPkg + "/" + pkgNum + " 组数据");
+                    byte[] buffer = new byte[fromFile.Length];
+                    fromFile.Read(buffer, 0, buffer.Length);
+                    fromFile.Flush();
+                    toFile.Write(buffer, 0, buffer.Length);
+                    toFile.Flush();
+                }
+                OutputLog("[合并文件完成]");    // 合并文件
+                fromFile.Close();
+                toFile.Close();
 
-                        fileStream.Write(b, 0, b.Length);
-                    });
-
-
-                    fileStream.Close();
-
-                    OutputLog("[接收完成]");
-                    return;
+              
+                
                // }
 
                 // 结束当前线程
                 OutputLog("[接收文件完成]");
                 Thread.CurrentThread.Suspend();
                 Thread.CurrentThread.Abort();
+                return;
             }
         }
 
